@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "1.0",
+  "mode": "historical-reconstruction",
+  "calculationStatus": "illustrative",
+  "statusBasis": "maximum-observed-during-incident",
+  "incident": {
+    "id": "eaton-2025",
+    "name": "Eaton Fire",
+    "jurisdiction": "Los Angeles County, California"
+  },
+  "dataAsOf": "2025-01-23",
+  "scoringModel": {
+    "version": "prototype-0.1",
+    "weights": {
+      "dynamicThreat": 0.45,
+      "evacuationFriction": 0.35,
+      "supportNeed": 0.2
+    }
+  },
+  "zones": [
+    {
+      "zoneId": "US-CA-XLA-PAS-E003",
+      "displayName": "PAS-E003",
+      "evacuationStatus": "Evacuation Order",
+      "priorityScore": 81,
+      "priorityLevel": "very-high",
+      "components": {
+        "dynamicThreat": 92,
+        "evacuationFriction": 78,
+        "supportNeed": 61
+      },
+      "confidence": {
+        "level": "low",
+        "notes": [
+          "경보 최고 단계만 공식 자료이며 나머지 점수 입력은 UI 검증용 예시입니다."
+        ]
+      },
+      "reasons": [
+        "공식 기록에서 Evacuation Order가 확인됩니다.",
+        "예시 입력에서 대피 마찰 점수가 높게 설정되었습니다."
+      ],
+      "actions": [
+        {
+          "category": "transport",
+          "label": "접근 가능한 교통수단의 가용 여부를 담당자가 확인",
+          "verificationRequired": true
+        }
+      ],
+      "sourceIds": [
+        "la-county-2025-maximum-evacuation-zones",
+        "prototype-fixture"
+      ]
+    },
+    {
+      "zoneId": "US-CA-XLA-PAS-E001",
+      "displayName": "PAS-E001",
+      "evacuationStatus": "Evacuation Order",
+      "priorityScore": 74,
+      "priorityLevel": "high",
+      "components": {
+        "dynamicThreat": 92,
+        "evacuationFriction": 62,
+        "supportNeed": 52
+      },
+      "confidence": {
+        "level": "low",
+        "notes": [
+          "경보 최고 단계만 공식 자료이며 나머지 점수 입력은 UI 검증용 예시입니다."
+        ]
+      },
+      "reasons": [
+        "공식 기록에서 Evacuation Order가 확인됩니다.",
+        "예시 입력에서 대피 마찰 점수가 중간 이상으로 설정되었습니다."
+      ],
+      "actions": [
+        {
+          "category": "outreach",
+          "label": "우선 연락 대상 시설과 연락 완료 여부를 담당자가 확인",
+          "verificationRequired": true
+        }
+      ],
+      "sourceIds": [
+        "la-county-2025-maximum-evacuation-zones",
+        "prototype-fixture"
+      ]
+    },
+    {
+      "zoneId": "US-CA-XLA-PAS-E006",
+      "displayName": "PAS-E006",
+      "evacuationStatus": "Evacuation Order",
+      "priorityScore": 70,
+      "priorityLevel": "high",
+      "components": {
+        "dynamicThreat": 92,
+        "evacuationFriction": 54,
+        "supportNeed": 47
+      },
+      "confidence": {
+        "level": "low",
+        "notes": [
+          "경보 최고 단계만 공식 자료이며 나머지 점수 입력은 UI 검증용 예시입니다."
+        ]
+      },
+      "reasons": [
+        "공식 기록에서 Evacuation Order가 확인됩니다.",
+        "예시 입력에서 동적 위협이 가장 큰 점수 요인입니다."
+      ],
+      "actions": [
+        {
+          "category": "shelter",
+          "label": "공식 대피소의 운영 상태와 접근 가능 여부를 담당자가 확인",
+          "verificationRequired": true
+        }
+      ],
+      "sourceIds": [
+        "la-county-2025-maximum-evacuation-zones",
+        "prototype-fixture"
+      ]
+    },
+    {
+      "zoneId": "US-CA-XLA-PAS-E004",
+      "displayName": "PAS-E004",
+      "evacuationStatus": "Evacuation Warning",
+      "priorityScore": 66,
+      "priorityLevel": "high",
+      "components": {
+        "dynamicThreat": 64,
+        "evacuationFriction": 70,
+        "supportNeed": 63
+      },
+      "confidence": {
+        "level": "low",
+        "notes": [
+          "경보 최고 단계만 공식 자료이며 나머지 점수 입력은 UI 검증용 예시입니다."
+        ]
+      },
+      "reasons": [
+        "공식 기록에서 Evacuation Warning이 확인됩니다.",
+        "예시 입력에서는 대피 마찰과 지원 필요가 순위를 높였습니다."
+      ],
+      "actions": [
+        {
+          "category": "language",
+          "label": "검토된 다국어 공식 안내의 배포 준비 상태를 담당자가 확인",
+          "verificationRequired": true
+        }
+      ],
+      "sourceIds": [
+        "la-county-2025-maximum-evacuation-zones",
+        "prototype-fixture"
+      ]
+    },
+    {
+      "zoneId": "US-CA-XLA-PAS-E005",
+      "displayName": "PAS-E005",
+      "evacuationStatus": "Evacuation Warning",
+      "priorityScore": 54,
+      "priorityLevel": "medium",
+      "components": {
+        "dynamicThreat": 64,
+        "evacuationFriction": 48,
+        "supportNeed": 40
+      },
+      "confidence": {
+        "level": "low",
+        "notes": [
+          "경보 최고 단계만 공식 자료이며 나머지 점수 입력은 UI 검증용 예시입니다."
+        ]
+      },
+      "reasons": [
+        "공식 기록에서 Evacuation Warning이 확인됩니다.",
+        "예시 입력에서는 동적 위협이 가장 큰 점수 요인입니다."
+      ],
+      "actions": [
+        {
+          "category": "outreach",
+          "label": "공식 경보 변경 여부와 연락 채널을 담당자가 재확인",
+          "verificationRequired": true
+        }
+      ],
+      "sourceIds": [
+        "la-county-2025-maximum-evacuation-zones",
+        "prototype-fixture"
+      ]
+    }
+  ],
+  "sourceRefs": [
+    {
+      "id": "la-county-2025-maximum-evacuation-zones",
+      "label": "LA County 2025 Maximum Extent Evacuation Zones",
+      "url": "https://www.arcgis.com/home/item.html?id=182e6350c18440e3a52e4de5f9d7fad2"
+    },
+    {
+      "id": "prototype-fixture",
+      "label": "EmberAid UI 검증용 예시 입력",
+      "url": null
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "checkedAt": "2026-07-23",
+  "sources": [
+    {
+      "id": "la-county-2025-maximum-evacuation-zones",
+      "name": "Maximum Extent Evacuation Zones - LA County Fires 2025",
+      "authority": "Los Angeles County Enterprise GIS",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "catalogUrl": "https://www.arcgis.com/home/item.html?id=182e6350c18440e3a52e4de5f9d7fad2",
+      "endpoint": "https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Maximum_Extent_Evacuation_Zones/FeatureServer/0",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "Feature layer metadata and 368 records were retrieved; 137 records are associated with EATON."
+      },
+      "limitations": [
+        "Represents zones that reached Warning or Order at any time, not timestamped status snapshots.",
+        "The most_extreme_status field is the highest alert level assigned to each zone.",
+        "The item notes manual visual verification and geometry adjustments."
+      ]
+    },
+    {
+      "id": "la-county-eaton-alert-investigation",
+      "name": "Investigation Report of the Eaton Fire Evacuation Alerts",
+      "authority": "Los Angeles County",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "documentUrl": "https://file.lacounty.gov/SDSInter/lac/1208708_InvestigationReportoftheEatonFireEvacuationAlerts_05-18-26_.pdf",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "The official PDF returned HTTP 200 on 2026-07-23."
+      },
+      "limitations": [
+        "Use only alert times and zones explicitly supported by the report.",
+        "Reconstructed checkpoints must be labeled as historical reconstruction."
+      ]
+    },
+    {
+      "id": "cal-oes-active-evacuations",
+      "name": "California Active Evacuation Zones",
+      "authority": "California Governor's Office of Emergency Services",
+      "modes": [
+        "live"
+      ],
+      "catalogUrl": "https://www.arcgis.com/home/item.html?id=c0dd2a8779764c26910b83a7e974ee66",
+      "endpoint": "https://services3.arcgis.com/uknczv4rpevve42E/arcgis/rest/services/CA_EVACUATIONS_PROD/FeatureServer/0",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "Feature layer metadata and evacuation-zone fields were retrieved."
+      },
+      "limitations": [
+        "This is a current active-zone aggregation, not a historical archive.",
+        "County-issued information remains the authoritative source."
+      ]
+    },
+    {
+      "id": "cal-fire-firis-perimeters",
+      "name": "CA Perimeters CAL FIRE NIFC FIRIS public view",
+      "authority": "CAL FIRE / FIRIS",
+      "modes": [
+        "live",
+        "historical-reconstruction"
+      ],
+      "catalogUrl": "https://www.arcgis.com/home/item.html?id=025fb2ea05f14890b2b11573341b5b18",
+      "endpoint": "https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Perimeters_NIFC_FIRIS_public_view/FeatureServer/0",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "Public FeatureServer metadata was retrieved."
+      },
+      "limitations": [
+        "Perimeters can be preliminary and can change after review.",
+        "The service is not an evacuation-order source."
+      ]
+    },
+    {
+      "id": "nws-points-and-grid-forecast",
+      "name": "National Weather Service API",
+      "authority": "National Weather Service",
+      "modes": [
+        "live",
+        "what-if-baseline"
+      ],
+      "endpointTemplate": "https://api.weather.gov/points/{latitude},{longitude}",
+      "access": {
+        "type": "user-agent",
+        "envVar": "NWS_USER_AGENT"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "The Eaton-area point request resolved to grid LOX/163,50 and an hourly forecast endpoint."
+      },
+      "limitations": [
+        "Requests must include a descriptive User-Agent with contact information.",
+        "Forecast data must retain its issuance and update times."
+      ]
+    },
+    {
+      "id": "census-acs5",
+      "name": "American Community Survey 5-Year Data API",
+      "authority": "United States Census Bureau",
+      "modes": [
+        "live",
+        "historical-reconstruction"
+      ],
+      "endpointTemplate": "https://api.census.gov/data/{year}/acs/acs5",
+      "access": {
+        "type": "api-key",
+        "envVar": "CENSUS_API_KEY"
+      },
+      "validation": {
+        "status": "blocked",
+        "evidence": "A keyless request returned HTTP 302 with X-DataWebAPI-KeyError on 2026-07-23."
+      },
+      "limitations": [
+        "ACS 5-year estimates are not real-time population counts.",
+        "Margins of error must be retained and shown for selected indicators."
+      ]
+    },
+    {
+      "id": "airnow-observations",
+      "name": "AirNow API",
+      "authority": "United States Environmental Protection Agency",
+      "modes": [
+        "live"
+      ],
+      "endpointTemplate": "https://www.airnowapi.org/aq/observation/zipCode/current/",
+      "access": {
+        "type": "api-key",
+        "envVar": "AIRNOW_API_KEY"
+      },
+      "validation": {
+        "status": "blocked",
+        "evidence": "An unauthenticated request returned HTTP 401 on 2026-07-23."
+      },
+      "limitations": [
+        "Observations and forecasts can change and are not medical diagnoses.",
+        "Health guidance must come from reviewed EPA/AirNow templates."
+      ]
+    }
+  ]
+}
