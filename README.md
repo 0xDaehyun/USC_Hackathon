@@ -323,3 +323,10 @@ P1 기능을 구현한 경우에는 다음 조건을 추가로 확인합니다.
 ---
 
 조사 및 문서 기준일: 2026-07-23
+
+---
+
+## SILOS 데모 (해커톤 ops UI)
+
+라이브 피치용 운영실 UI는 `/map`, `/dashboard`, `/community`에 있습니다.
+전체 기능·레이어·API 목록은 [docs/SILOS-FEATURES.md](docs/SILOS-FEATURES.md)를 보세요.

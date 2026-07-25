@@ -1,7 +1,55 @@
 {
   "version": 1,
-  "checkedAt": "2026-07-23",
+  "checkedAt": "2026-07-25",
   "sources": [
+    {
+      "id": "silos-simulated-demo",
+      "name": "SILOS simulated demo dataset (mock /api/v1 routes)",
+      "authority": "Hand-authored for the SILOS hackathon demo (this repository)",
+      "modes": [
+        "what-if"
+      ],
+      "endpoint": "app/api/v1 (Next.js route handlers) backed by lib/silos/mock",
+      "access": {
+        "type": "local"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "Deterministic scripted timeline; shapes hand-drawn on real Eaton Fire / Altadena geography and reviewed for internal consistency (vulnerability summaries match sector details).",
+        "checkedAt": "2026-07-25"
+      },
+      "limitations": [
+        "Fire boundary, spread prediction, sector polygons, vulnerability percentages, and feed events are demo fixtures, not official data (irregular GIS-style polygons, not grid cells).",
+        "Real responder-org names appear for authenticity, but all messages and claims are scripted fiction and labeled simulated in the UI.",
+        "Facility markers use generic descriptors, not real named businesses.",
+        "Contract mirror for the real backend: swapping in live data must not change response shapes (see lib/silos/types.ts)."
+      ]
+    },
+    {
+      "id": "la-county-lariac-buildings-2023",
+      "name": "Building Outline (2023) — LARIAC (local GeoJSON clip)",
+      "authority": "Los Angeles County / LARIAC",
+      "modes": [
+        "live",
+        "what-if"
+      ],
+      "catalogUrl": "https://planning.lacounty.gov/maps-and-gis/gis-data/",
+      "endpoint": "public/gis/buildings.geojson",
+      "sourceEndpoint": "https://arcgis.gis.lacounty.gov/arcgis/rest/services/DRP/GISNET_Public/MapServer/434",
+      "access": {
+        "type": "local"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "Clipped Eaton/Altadena/Pasadena AOI (-118.185,34.148,-118.055,34.235); ~102.5k unique footprints extracted from PMTiles z16, then filtered to ~46.8k (area≥45m², height≥5m). Runtime preloads public/gis/buildings.geojson once (no tile streaming).",
+        "checkedAt": "2026-07-25"
+      },
+      "limitations": [
+        "Subset only — not county-wide LARIAC. Rebuild with: npm run build:buildings",
+        "Tiny auxiliary footprints removed for demo GPU budget; HEIGHT defaults (~6.5 m) when source null.",
+        "No runtime dependency on ArcGIS / OSM; basemap tiles remain remote (CARTO)."
+      ]
+    },
     {
       "id": "la-county-2025-maximum-evacuation-zones",
       "name": "Maximum Extent Evacuation Zones - LA County Fires 2025",
@@ -129,6 +177,87 @@
       "limitations": [
         "ACS 5-year estimates are not real-time population counts.",
         "Margins of error must be retained and shown for selected indicators."
+      ]
+    },
+    {
+      "id": "sentinel-2-earth-search",
+      "name": "Sentinel-2 L2A COGs via Element84 Earth Search STAC",
+      "authority": "ESA Copernicus / Element84 (AWS Open Data)",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "endpoint": "https://earth-search.aws.element84.com/v1",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "On 2026-07-25 the risk pipeline retrieved pre/post-fire scenes S2B_11SLT_20241218 and S2C_11SLT_20250221 (6 bands, 20 m) for the Palisades/Eaton AOI."
+      },
+      "limitations": [
+        "Scenes with processing baseline >= 04.00 carry a -1000 BOA offset that the pipeline subtracts.",
+        "Cloud cover and scene footprints limit usable acquisition dates."
+      ]
+    },
+    {
+      "id": "noaa-hrrr-smoke-archive",
+      "name": "NOAA HRRR-Smoke archive (AWS Open Data, via Herbie)",
+      "authority": "NOAA",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "endpoint": "https://noaa-hrrr-bdp-pds.s3.amazonaws.com/",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "On 2026-07-25 the pipeline fetched MASSDEN (8 m near-surface smoke) analyses for six timestamps on 2025-01-08/09 and averaged them over the LA AOI."
+      },
+      "limitations": [
+        "Model analysis fields, not ground-station PM2.5 observations.",
+        "Values must not be presented as measured air quality or medical guidance."
+      ]
+    },
+    {
+      "id": "cdc-svi-2022-tract",
+      "name": "CDC/ATSDR Social Vulnerability Index 2022 (census tract)",
+      "authority": "CDC/ATSDR GRASP",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "endpoint": "https://onemap.cdc.gov/onemapservices/rest/services/SVI/CDC_ATSDR_Social_Vulnerability_Index_2022_USA/FeatureServer/2",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified",
+        "evidence": "On 2026-07-25 the pipeline downloaded 2,495 LA County tracts (STCNTY='06037') with RPL_THEMES via paginated GeoJSON queries."
+      },
+      "limitations": [
+        "RPL_THEMES = -999 marks undefined percentiles and is excluded from scoring.",
+        "2018-2022 ACS-based aggregate ranking, not real-time population data."
+      ]
+    },
+    {
+      "id": "prithvi-eo-2-burnscars",
+      "name": "Prithvi-EO-2.0-300M-BurnScars (pre-trained segmentation model)",
+      "authority": "IBM / NASA (Hugging Face)",
+      "modes": [
+        "historical-reconstruction"
+      ],
+      "catalogUrl": "https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M-BurnScars",
+      "access": {
+        "type": "public"
+      },
+      "validation": {
+        "status": "verified-with-caveats",
+        "evidence": "On 2026-07-25 zero-shot inference ran successfully, but the output failed a dNBR cross-check (12% agreement, grid tiling artifacts on Sentinel-2-assembled input); the deterministic dNBR mask is the recommended burn input."
+      },
+      "limitations": [
+        "Trained on HLS imagery; Sentinel-2-assembled stacks can mismatch its expected preprocessing.",
+        "Model output is a research artifact, never an official burn perimeter.",
+        "Pipeline gates model output behind a >=30% dNBR-agreement check."
       ]
     },
     {

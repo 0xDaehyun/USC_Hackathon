@@ -1,0 +1,31 @@
+# Keep the Vercel upload to the Next.js app only.
+.git
+.cursor
+.next
+node_modules
+out
+dist
+coverage
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example
+
+# Python / risk pipeline — not needed for the SILOS web deploy
+pipeline/
+data/raw/
+data/cache/
+data/processed/
+data/source-manifest.json
+execution_log.txt
+
+# Local tooling
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.DS_Store

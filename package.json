@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run sync:maplibre && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "validate:data": "node scripts/validate-data.mjs",
+    "sync:maplibre": "mkdir -p public/maplibre && cp node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs public/maplibre/",
+    "postinstall": "npm run sync:maplibre",
+    "build:buildings": "node scripts/build-buildings-pmtiles.mjs && python3 scripts/build-buildings-geojson.py",
     "test": "npm run validate:data && npm run typecheck"
   },
   "dependencies": {
     "maplibre-gl": "6.0.0",
     "next": "16.2.11",
+    "pmtiles": "^4.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -26,6 +30,7 @@
     "ajv": "8.20.0",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
+    "playwright": "^1.62.0",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3"
   },

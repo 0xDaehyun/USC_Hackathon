@@ -12,6 +12,7 @@ import {
   Popup,
 } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
+import { ensureMaplibreWorker } from "@/lib/silos/maplibre";
 
 const EATON_ZONES_URL = new URL(
   "https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Maximum_Extent_Evacuation_Zones/FeatureServer/0/query",
@@ -42,6 +43,8 @@ export function EvacuationMap() {
     if (!containerRef.current) {
       return;
     }
+
+    ensureMaplibreWorker();
 
     const map = new Map({
       container: containerRef.current,

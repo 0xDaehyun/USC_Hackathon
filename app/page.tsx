@@ -1,210 +1,207 @@
-import { EvacuationMap } from "@/components/EvacuationMap";
-import fixture from "@/data/sample/eaton-priority.json";
-import type { PriorityDataset, PriorityLevel } from "@/lib/types";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { RoleEntry } from "@/components/silos/RoleEntry";
 
-const data = fixture as PriorityDataset;
-
-const levelStyles: Record<PriorityLevel, string> = {
-  "very-high": "bg-red-100 text-red-800 ring-red-200",
-  high: "bg-orange-100 text-orange-800 ring-orange-200",
-  medium: "bg-amber-100 text-amber-800 ring-amber-200",
-  low: "bg-emerald-100 text-emerald-800 ring-emerald-200",
+export const metadata: Metadata = {
+  title: "SILOS — Live relief coordination",
+  description:
+    "Live wildfire relief ops: predicted spread, sector priority, and organization coverage on one shared map.",
 };
 
-const levelLabels: Record<PriorityLevel, string> = {
-  "very-high": "매우 높음",
-  high: "높음",
-  medium: "중간",
-  low: "낮음",
-};
+const FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap";
 
-export default function Home() {
+/**
+ * Onboarding step 1 — paper-brutalist entry. Red "SELECT YOUR DESK" CTA
+ * routes to `/desk` for role selection, then into the ops room.
+ */
+export default function OnboardingPage() {
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-stone-200/80 bg-[#f6f3ec]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-[92rem] items-center justify-between px-5 py-4 sm:px-8">
-          <a className="flex items-center gap-3" href="#">
-            <span className="grid size-10 place-items-center rounded-2xl bg-[#183a35] text-lg text-white shadow-sm">
-              E
-            </span>
-            <span>
-              <span className="block text-base font-bold tracking-tight text-slate-950">
-                EmberAid CA
-              </span>
-              <span className="block text-xs text-slate-500">
-                Evacuation assistance intelligence
-              </span>
-            </span>
-          </a>
-          <span className="rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-800">
-            Prototype · 공식 시스템 아님
-          </span>
+    <div className="onb flex min-h-screen flex-col overflow-hidden">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link href={FONTS_URL} rel="stylesheet" />
+
+      {/* top register strip */}
+      <div className="onb-mono grid grid-cols-5 gap-5 border-y border-[var(--onb-ink)] px-6 py-2">
+        <div className="truncate">
+          <b>SYS.</b> <span className="text-[var(--onb-ink-soft)]">SILOS / OPS</span>
         </div>
+        <div className="truncate">
+          <b>INC.</b> <span className="text-[var(--onb-ink-soft)]">EATON FIRE</span>
+        </div>
+        <div className="truncate">
+          <b>LAT.</b> <span className="text-[var(--onb-ink-soft)]">34.1880° N</span>
+        </div>
+        <div className="truncate">
+          <b>LON.</b> <span className="text-[var(--onb-ink-soft)]">−118.1180° W</span>
+        </div>
+        <div className="truncate text-right">
+          <b>STATUS</b>{" "}
+          <span className="text-[var(--onb-hazard)]">⬤ LIVE</span>
+        </div>
+      </div>
+
+      {/* nav rule */}
+      <header className="flex items-baseline justify-between border-b-4 border-[var(--onb-ink)] px-6 py-3.5">
+        <span className="onb-display text-2xl">
+          SILOS
+          <sup className="onb-mono ml-1 align-top text-[9px] text-[var(--onb-hazard)]">
+            LIVE
+          </sup>
+        </span>
+        <nav className="onb-mono flex gap-4">
+          <Link
+            href="/map"
+            className="border border-[var(--onb-ink)] px-2 py-1 hover:bg-[var(--onb-ink)] hover:text-[var(--onb-paper)]"
+          >
+            [ OPS ROOM ]
+          </Link>
+          <Link
+            href="/dashboard"
+            className="border border-[var(--onb-ink)] px-2 py-1 hover:bg-[var(--onb-ink)] hover:text-[var(--onb-paper)]"
+          >
+            [ COVERAGE ]
+          </Link>
+          <Link
+            href="/community"
+            className="border border-[var(--onb-ink)] px-2 py-1 hover:bg-[var(--onb-ink)] hover:text-[var(--onb-paper)]"
+          >
+            [ WIRE ]
+          </Link>
+        </nav>
+        <span className="onb-mono">
+          CHANNEL <span className="text-[var(--onb-hazard)]">PRIMARY</span>
+        </span>
       </header>
 
-      <div className="mx-auto max-w-[92rem] px-5 py-8 sm:px-8 lg:py-12">
-        <section className="grid gap-8 border-b border-stone-300 pb-9 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
-          <div>
-            <div className="mb-4 flex flex-wrap gap-2">
-              <span className="rounded-full bg-[#183a35] px-3 py-1 text-xs font-semibold text-white">
-                Historical Reconstruction
-              </span>
-              <span className="rounded-full border border-stone-300 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700">
-                데이터 기준 {data.dataAsOf}
-              </span>
+      {/* hero: rotating instrument left, briefing column right */}
+      <main className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[1.15fr_1fr]">
+        <section className="relative grid place-items-center overflow-hidden p-10">
+          <div className="relative aspect-square w-[min(64vh,90%)]">
+            <div className="onb-ring" />
+            <div
+              className="onb-ring"
+              style={{
+                inset: "5%",
+                animationDuration: "90s",
+                animationDirection: "reverse",
+                borderColor: "rgba(6,6,6,0.3)",
+              }}
+            />
+            <div
+              className="onb-ring"
+              style={{
+                inset: "11%",
+                animationDuration: "180s",
+                borderStyle: "dashed",
+                borderColor: "rgba(6,6,6,0.22)",
+              }}
+            />
+            <div
+              className="onb-ring"
+              style={{
+                inset: "19%",
+                animationDuration: "36s",
+                borderColor: "rgba(6,6,6,0.12)",
+              }}
+            />
+
+            <div
+              className="absolute inset-[23%]"
+              style={{ animation: "onb-spin 38s linear infinite reverse" }}
+            >
+              <svg viewBox="0 0 200 200" aria-hidden className="h-full w-full">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="92"
+                  fill="var(--onb-paper-2)"
+                  stroke="rgba(6,6,6,0.35)"
+                  strokeWidth="0.7"
+                />
+                <g fill="none" stroke="rgba(6,6,6,0.4)" strokeWidth="0.7">
+                  <ellipse cx="100" cy="100" rx="92" ry="20" />
+                  <ellipse cx="100" cy="100" rx="92" ry="48" />
+                  <ellipse cx="100" cy="100" rx="92" ry="78" />
+                  <ellipse cx="100" cy="100" rx="20" ry="92" />
+                  <ellipse cx="100" cy="100" rx="48" ry="92" />
+                  <ellipse cx="100" cy="100" rx="78" ry="92" />
+                </g>
+                <path
+                  d="M 100 100 L 148 52 A 68 68 0 0 1 168 100 Z"
+                  fill="rgba(230,25,25,0.28)"
+                  stroke="rgba(230,25,25,0.8)"
+                  strokeWidth="1"
+                />
+                <g fill="rgba(6,6,6,0.24)" stroke="rgba(6,6,6,0.5)" strokeWidth="0.6">
+                  <path d="M 60 74 Q 76 62 94 68 L 104 82 Q 96 94 82 98 L 66 94 Q 56 86 60 74 Z" />
+                  <path d="M 56 112 Q 74 112 86 126 Q 82 142 66 150 Q 52 138 56 112 Z" />
+                  <path d="M 104 122 Q 124 116 144 128 Q 140 144 122 152 Q 104 144 104 122 Z" />
+                </g>
+              </svg>
             </div>
-            <h1 className="max-w-4xl text-4xl leading-[1.08] font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl lg:text-6xl">
-              지원이 먼저 필요한 구역과
-              <span className="text-[#c65337]"> 그 이유</span>를 함께 봅니다.
-            </h1>
-            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-              LA County 공식 구역과 설명 가능한 예시 점수를 결합한 P0 화면
-              골격입니다. 점수는 아직 검증되지 않았으며 공식 대피 명령을
-              대체하지 않습니다.
-            </p>
+
+            <div className="onb-focal-dot" />
+
+            <span className="onb-mono absolute top-[6%] left-1/2 -translate-x-1/2 text-[10px] text-[var(--onb-ink-soft)]">
+              SPREAD · T+6H
+            </span>
+            <span className="onb-mono absolute bottom-[6%] left-1/2 -translate-x-1/2 text-[10px] text-[var(--onb-hazard)]">
+              ⬤ EATON · 34.19N 118.13W
+            </span>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-6 overflow-y-auto border-l border-[var(--onb-ink)] p-8">
+          <span className="onb-mono">
+            <span className="text-[var(--onb-hazard)]">[</span> ACTIVE INCIDENT · RELIEF
+            DESK <span className="text-[var(--onb-hazard)]">]</span>
+          </span>
+
+          <h1 className="onb-display onb-type-in text-[clamp(44px,5.2vw,76px)]">
+            Aid before the&nbsp;ask<span className="text-[var(--onb-hazard)]">.</span>
+          </h1>
+
+          <p className="onb-body max-w-[44ch]">
+            The Eaton Fire is pushing into Altadena. SILOS reads predicted spread,
+            ranks neighborhood sectors by vulnerability, and lets relief organizations
+            claim coverage{" "}
+            <em className="not-italic font-medium text-[var(--onb-hazard)]">
+              before requests come in
+            </em>
+            . One shared map — every desk sees the same gaps.
+          </p>
+
+          <div>
+            <div className="onb-meta-row">
+              <b>PREDICT</b>
+              <span>Spread model → sector priority by ETA &amp; vulnerability</span>
+            </div>
+            <div className="onb-meta-row">
+              <b>CLAIM</b>
+              <span>Orgs claim sectors on the live map — gaps stay visible</span>
+            </div>
+            <div className="onb-meta-row">
+              <b>COORDINATE</b>
+              <span>Sector threads replace cross-org phone trees</span>
+            </div>
+            <div className="onb-meta-row border-b border-[var(--onb-ink)]">
+              <b>FEED</b>
+              <span>Live fire vitals · sector status · org claims</span>
+            </div>
           </div>
 
-          <dl className="grid grid-cols-3 gap-3">
-            <Metric label="공식 Eaton 구역" value="137" />
-            <Metric label="예시 우선순위" value={String(data.zones.length)} />
-            <Metric label="점수 신뢰" value="낮음" />
-          </dl>
+          <RoleEntry />
         </section>
+      </main>
 
-        <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1.5fr)_minmax(23rem,0.7fr)]">
-          <EvacuationMap />
-
-          <aside
-            aria-labelledby="ranking-title"
-            className="rounded-[1.75rem] border border-stone-200 bg-[#183a35] p-5 text-white shadow-[0_24px_70px_rgba(26,54,49,0.16)] sm:p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold tracking-[0.18em] text-[#f3b493] uppercase">
-                  Illustrative scores
-                </p>
-                <h2 id="ranking-title" className="mt-1 text-xl font-semibold">
-                  지원 우선순위
-                </h2>
-              </div>
-              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs text-white/80">
-                45 · 35 · 20
-              </span>
-            </div>
-
-            <ol className="mt-5 space-y-3">
-              {data.zones.map((zone, index) => (
-                <li
-                  key={zone.zoneId}
-                  className="rounded-2xl border border-white/10 bg-white/[0.07] p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-white/45">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{zone.displayName}</p>
-                      <p className="mt-0.5 truncate text-xs text-white/55">
-                        {zone.evacuationStatus}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-semibold tabular-nums">
-                        {zone.priorityScore}
-                      </p>
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ring-1 ring-inset ${levelStyles[zone.priorityLevel]}`}
-                      >
-                        {levelLabels[zone.priorityLevel]}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                    <ScorePart
-                      label="위협"
-                      score={zone.components.dynamicThreat}
-                    />
-                    <ScorePart
-                      label="대피 마찰"
-                      score={zone.components.evacuationFriction}
-                    />
-                    <ScorePart
-                      label="지원 필요"
-                      score={zone.components.supportNeed}
-                    />
-                  </div>
-
-                  <p className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-white/70">
-                    {zone.actions[0].label}
-                  </p>
-                </li>
-              ))}
-            </ol>
-
-            <p className="mt-5 rounded-xl bg-black/15 px-3 py-2.5 text-xs leading-5 text-white/60">
-              점수 입력은 UI·계산 계약 검증용 예시입니다. 실제 운영 전에는
-              ACS 지표, 도로 데이터, 전문가 검증이 필요합니다.
-            </p>
-          </aside>
-        </div>
-
-        <section className="mt-8 grid gap-4 md:grid-cols-3">
-          <MethodCard
-            number="45%"
-            title="Dynamic Threat"
-            body="공식 대피 상태, 화재 경계, 기상·공기질을 분리된 출처와 시각으로 추적합니다."
-          />
-          <MethodCard
-            number="35%"
-            title="Evacuation Friction"
-            body="차량 접근성과 진출 도로처럼 실제 이동을 방해할 수 있는 조건을 설명합니다."
-          />
-          <MethodCard
-            number="20%"
-            title="Support Need"
-            body="개인이 아닌 집계 통계로 지원 수요를 보고, 신뢰도와 오차를 별도로 표시합니다."
-          />
-        </section>
-      </div>
-    </main>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-stone-200 bg-white/65 p-4">
-      <dt className="text-xs leading-4 text-slate-500">{label}</dt>
-      <dd className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
-        {value}
-      </dd>
+      <footer className="onb-mono flex items-center justify-between border-t border-[var(--onb-ink)] px-6 py-2.5">
+        <span>
+          SIGNAL · <span className="text-[var(--onb-hazard)]">LIVE</span>
+        </span>
+        <span className="text-[var(--onb-ink-soft)]">SECURE CHANNEL · DESK CLEARANCE</span>
+        <span>BROADCASTING / 0001</span>
+      </footer>
     </div>
-  );
-}
-
-function ScorePart({ label, score }: { label: string; score: number }) {
-  return (
-    <div className="rounded-xl bg-black/15 px-2 py-2">
-      <p className="text-[0.65rem] text-white/50">{label}</p>
-      <p className="mt-0.5 text-sm font-semibold tabular-nums">{score}</p>
-    </div>
-  );
-}
-
-function MethodCard({
-  number,
-  title,
-  body,
-}: {
-  number: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article className="rounded-2xl border border-stone-200 bg-white/60 p-5">
-      <p className="text-sm font-semibold text-[#c65337]">{number}</p>
-      <h2 className="mt-2 font-semibold text-slate-950">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
-    </article>
   );
 }
