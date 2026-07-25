@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://silos.local/contracts/aft-observed-validation.schema.json",
+  "title": "AFT observed validation frontend contract",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "incident",
+    "mode",
+    "generated_at",
+    "methodology",
+    "sources",
+    "model",
+    "horizons",
+    "arrival_time",
+    "summary",
+    "quality_checks",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "incident": {
+      "type": "object",
+      "required": ["id", "name", "ignition_time_utc"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "ignition_time_utc": { "type": "string", "format": "date-time" }
+      }
+    },
+    "mode": { "const": "historical-validation" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "methodology": { "type": "object" },
+    "sources": { "type": "object" },
+    "model": {
+      "type": "object",
+      "required": ["family", "teacher", "assessment", "prediction_unit"],
+      "properties": {
+        "family": { "const": "xgboost-aft" },
+        "teacher": { "const": "ELMFIRE" },
+        "assessment": { "type": "string" },
+        "prediction_unit": { "type": "string" }
+      }
+    },
+    "horizons": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "hour_offset",
+          "lead_hours_after_initialization",
+          "role",
+          "observed",
+          "teacher",
+          "student",
+          "counts"
+        ],
+        "properties": {
+          "hour_offset": { "enum": [1, 3, 6] },
+          "lead_hours_after_initialization": { "enum": [0, 2, 5] },
+          "role": {
+            "enum": [
+              "initialization-not-scored",
+              "calibration",
+              "holdout"
+            ]
+          },
+          "observed": { "$ref": "#/$defs/feature" },
+          "teacher": { "$ref": "#/$defs/feature" },
+          "student": { "$ref": "#/$defs/feature" },
+          "counts": {
+            "type": "object",
+            "required": [
+              "selected_student_grid_cells",
+              "connected_student_grid_cells",
+              "discarded_disconnected_student_grid_cells"
+            ]
+          },
+          "comparisons": { "type": "object" }
+        }
+      }
+    },
+    "arrival_time": { "type": "object" },
+    "summary": {
+      "type": "object",
+      "required": [
+        "status",
+        "holdout_hour",
+        "student_vs_observed",
+        "teacher_vs_observed",
+        "student_vs_teacher"
+      ],
+      "properties": {
+        "status": { "const": "share-with-caveats" },
+        "holdout_hour": { "const": 6 }
+      }
+    },
+    "quality_checks": { "type": "object" },
+    "warnings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "required": ["type", "properties", "geometry"],
+      "properties": {
+        "type": { "const": "Feature" },
+        "properties": { "type": "object" },
+        "geometry": {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "enum": ["Polygon", "MultiPolygon"] },
+            "coordinates": { "type": "array", "minItems": 1 }
+          }
+        }
+      }
+    }
+  }
+}

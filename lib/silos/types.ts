@@ -11,7 +11,7 @@
  * Mock /api/v1 routes serve an in-memory Eaton Fire incident for local and
  * staged runs until a live backend is wired in.
  */
-import type { Feature, Polygon } from "geojson";
+import type { Feature, MultiPolygon, Polygon } from "geojson";
 
 export type SectorPriority = "critical" | "warning" | "monitor";
 export type CoverageStatus = "unassigned" | "claimed" | "active";
@@ -36,11 +36,42 @@ export type Fire = {
 
 export type FirePredictionStep = {
   hour_offset: number;
-  spread_polygon_geojson: Feature<Polygon>;
+  lead_hours_after_initialization: number;
+  reached_grid_cell_count: number;
+  connected_grid_cell_count: number;
+  discarded_disconnected_grid_cell_count: number;
+  spread_polygon_geojson: Feature<Polygon | MultiPolygon>;
 };
 
 export type FirePrediction = {
+  schema_version: "1.0";
+  incident_id: "fire-eaton-sim";
+  mode: "historical-reconstruction-what-if";
+  generated_at: string;
+  model: {
+    family: "xgboost-aft";
+    version: "pilot-v0.1";
+    teacher: "ELMFIRE";
+    assessment: "pilot-limited";
+    aft_distribution_scale: number;
+    source_model_manifest: string;
+    output_semantics:
+      "elmfire-teacher-grid-arrival-surrogate-prototype";
+  };
+  scenario: {
+    wind_speed_add_mph: number;
+    wind_direction_add_degrees: number;
+    m1_add_percentage_points: number;
+    m10_add_percentage_points: number;
+    m100_add_percentage_points: number;
+    initialization_hour_after_ignition: 1;
+    display_hours_after_ignition: [1, 3, 6];
+    prediction_time_unit:
+      "hours-after-observed-perimeter-initialization";
+    grid_cell_size_meters: 240;
+  };
   hourly_steps: FirePredictionStep[];
+  warnings: string[];
 };
 
 export type VulnerableSummary = {

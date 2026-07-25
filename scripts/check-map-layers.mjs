@@ -75,7 +75,11 @@ if (!result.hasFireLayer) {
   console.error("FAIL: fire layer missing from style");
   process.exit(1);
 }
-if (result.sourceFeatures.fire < 1 || result.sourceFeatures.sectors < 1) {
+if (
+  result.sourceFeatures.fire < 1 ||
+  result.sourceFeatures.sectors < 1 ||
+  result.sourceFeatures.prediction < 1
+) {
   console.error("FAIL: GeoJSON sources empty — worker likely broken");
   process.exit(1);
 }

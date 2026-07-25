@@ -100,9 +100,9 @@ export const SECTOR_BASE: SectorBase[] = [
     vulnerable_summary: { elderly_pct: 18, no_vehicle_pct: 22, language_barrier_pct: 14 },
     predicted_aid_types: ["evacuation transport", "shelter intake"],
     predicted_household_count: 1540,
-    eta_hours: 11,
+    eta_hours: null,
     summary:
-      "West of the projected 12h spread edge. Highest no-vehicle share in the operating area; disability services center in sector.",
+      "Outside the validated 6h model horizon. Highest no-vehicle share in the operating area; disability services center in sector.",
     road_access: {
       rating: "open",
       single_access_roads: [],
@@ -120,9 +120,9 @@ export const SECTOR_BASE: SectorBase[] = [
     vulnerable_summary: { elderly_pct: 21, no_vehicle_pct: 9, language_barrier_pct: 8 },
     predicted_aid_types: ["wellness checks"],
     predicted_household_count: 620,
-    eta_hours: 10,
+    eta_hours: null,
     summary:
-      "Foothill-adjacent residential pocket inside the 12h spread cone; ember-cast risk ahead of the front.",
+      "Outside the validated 6h model horizon. Foothill-adjacent residential pocket retained for preparedness monitoring.",
     road_access: {
       rating: "moderate",
       single_access_roads: [],
@@ -139,9 +139,9 @@ export const SECTOR_BASE: SectorBase[] = [
     vulnerable_summary: { elderly_pct: 27, no_vehicle_pct: 12, language_barrier_pct: 10 },
     predicted_aid_types: ["wellness checks", "shelter intake", "medical support"],
     predicted_household_count: 1120,
-    eta_hours: 9,
+    eta_hours: null,
     summary:
-      "Highest elderly share in the operating area; assisted-living facility and senior center in sector.",
+      "Outside the validated 6h model horizon. Highest elderly share in the operating area; assisted-living facility and senior center in sector.",
     road_access: {
       rating: "open",
       single_access_roads: [],
@@ -160,9 +160,9 @@ export const SECTOR_BASE: SectorBase[] = [
     vulnerable_summary: { elderly_pct: 29, no_vehicle_pct: 7, language_barrier_pct: 4 },
     predicted_aid_types: ["debris search", "wellness checks", "evacuation transport"],
     predicted_household_count: 340,
-    eta_hours: 14,
+    eta_hours: null,
     summary:
-      "Single-access foothill neighborhood (Chaney Trail only). Early burn impact on structures; ash/debris search will be required — certified teams only.",
+      "Outside the validated 6h model horizon. Single-access foothill neighborhood retained because certified ash/debris search capacity is limited.",
     road_access: {
       rating: "constrained",
       single_access_roads: ["Chaney Trail"],
@@ -292,7 +292,7 @@ export const SCRIPT: ScriptStep[] = [
     event: {
       type: "predictive_alert",
       sector_id: "S6",
-      text: "S6 Woodbury flagged: assisted-living facility inside 9h spread cone — medical transfer support will be needed.",
+      text: "S6 Woodbury preparedness flag: outside the 6h model horizon, but assisted-living transfers still require pre-positioning.",
     },
     effects: [{ sector_id: "S6", priority: "critical" }],
   },

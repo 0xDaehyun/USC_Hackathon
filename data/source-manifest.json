@@ -26,6 +26,58 @@
       ]
     },
     {
+      "id": "eaton-aft-elmfire-surrogate",
+      "name": "Eaton ELMFIRE-to-XGBoost AFT pilot prediction",
+      "authority": "EmberAid physics-guided ML pipeline (this project)",
+      "modes": [
+        "historical-reconstruction",
+        "what-if"
+      ],
+      "endpoint": "data/model/eaton-aft-prediction.json",
+      "access": {
+        "type": "local-generated"
+      },
+      "validation": {
+        "status": "prototype-limited",
+        "evidence": "32 ELMFIRE Teacher runs; grouped 4-fold AFT arrival-time MAE 0.208 hours and macro IoU 0.950. The classification baseline macro IoU is 0.964.",
+        "checkedAt": "2026-07-26"
+      },
+      "limitations": [
+        "Approximates ELMFIRE Teacher output and is not a calibrated real-fire probability or official forecast.",
+        "Eaton historical reconstruction only; not validated for a new incident or arbitrary California location.",
+        "T+1 is an observation-derived initialization footprint. T+3 and T+6 are two- and five-hour AFT model leads.",
+        "Only 240 m prediction cells connected to the initialization footprint are rendered.",
+        "The current artifact is a precomputed baseline scenario; live slider-driven inference is not connected."
+      ]
+    },
+    {
+      "id": "eaton-aft-observed-validation",
+      "name": "Eaton XGBoost AFT observed-progression validation",
+      "authority": "EmberAid validation pipeline using Schissel et al. observation-derived progression",
+      "modes": [
+        "historical-validation"
+      ],
+      "catalogUrl": "https://acs.figshare.com/articles/dataset/Fine_Spatial_and_Temporal_Scale_Fuel_and_Emissions_Inventories_for_the_Eaton_and_Palisades_Wildland_Urban_Interface_WUI_Fires/30809068",
+      "documentUrl": "https://doi.org/10.1021/acsestair.5c00287",
+      "endpoint": "data/model/eaton-aft-observed-validation.json",
+      "access": {
+        "type": "local-generated",
+        "sourceLicense": "CC BY-NC 4.0"
+      },
+      "validation": {
+        "status": "share-with-caveats",
+        "evidence": "At the untouched T+6 temporal holdout, the Student-vs-observed 30 m footprint IoU is 0.642, precision 0.874, recall 0.707, and F1 0.782. Metrics reconcile exactly with saved TP/FP/FN counts.",
+        "checkedAt": "2026-07-25"
+      },
+      "limitations": [
+        "The source progression is a satellite-derived hourly research reconstruction augmented by local reporting, not an official perimeter at every hour.",
+        "T+1 initialization, T+3 calibration, and T+6 holdout use one observation-derived dataset; this is not independent incident certification.",
+        "The Student predicts 240 m blocks. Map geometries are simplified for rendering, while reported metrics use unsimplified 30 m masks.",
+        "The T+6 Student-vs-observed footprint IoU exceeds the Teacher footprint IoU by 0.150, but the same native-grid difference is only 0.009; block expansion must not be presented as learned real-fire correction.",
+        "This Eaton-only result does not establish performance on Palisades or a future wildfire."
+      ]
+    },
+    {
       "id": "la-county-lariac-buildings-2023",
       "name": "Building Outline (2023) — LARIAC (local GeoJSON clip)",
       "authority": "Los Angeles County / LARIAC",

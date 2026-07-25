@@ -3,6 +3,7 @@
 import type {
   Feature,
   FeatureCollection,
+  MultiPolygon,
   Polygon,
   Position,
 } from "geojson";
@@ -18,13 +19,15 @@ import { loadBuildingsGeoJSON } from "@/lib/silos/buildings";
 import {
   ACCESS_ROADS,
   FACILITIES,
-  FIRE_BOUNDARY,
   POPULATION_VULNERABILITY,
-  PREDICTION_STEPS,
   SECTOR_POLYGONS,
   accessRoadCenter,
   sectorCenter,
 } from "@/lib/silos/mock/geo";
+import {
+  EATON_AFT_PREDICTION,
+  EATON_INITIALIZATION_BOUNDARY,
+} from "@/lib/silos/model/prediction";
 import { ensureMaplibreWorker } from "@/lib/silos/maplibre";
 import type { Fire, FirePrediction, Sector } from "@/lib/silos/types";
 
@@ -142,21 +145,26 @@ function ringContains(ring: Position[], lng: number, lat: number): boolean {
   return inside;
 }
 
-function pointInPolygon(poly: Feature<Polygon> | Polygon, lng: number, lat: number): boolean {
+function pointInPolygon(
+  poly: Feature<Polygon | MultiPolygon> | Polygon | MultiPolygon,
+  lng: number,
+  lat: number,
+): boolean {
   const geom = "geometry" in poly ? poly.geometry : poly;
-  const ring = geom.coordinates[0];
-  if (!ring?.length) {
-    return false;
-  }
-  if (!ringContains(ring, lng, lat)) {
-    return false;
-  }
-  for (let h = 1; h < geom.coordinates.length; h++) {
-    if (ringContains(geom.coordinates[h], lng, lat)) {
+  const polygons =
+    geom.type === "Polygon" ? [geom.coordinates] : geom.coordinates;
+  return polygons.some((coordinates) => {
+    const ring = coordinates[0];
+    if (!ring?.length || !ringContains(ring, lng, lat)) {
       return false;
     }
-  }
-  return true;
+    for (let h = 1; h < coordinates.length; h++) {
+      if (ringContains(coordinates[h], lng, lat)) {
+        return false;
+      }
+    }
+    return true;
+  });
 }
 
 function polygonCentroid(coords: Position[][]): [number, number] | null {
@@ -242,7 +250,7 @@ function bufferPolygonMeters(
 /** Select buildings from the preloaded FC whose centroid falls inside `poly`. */
 function harvestBuildingsInPolygon(
   buildings: FeatureCollection,
-  poly: Feature<Polygon> | Polygon,
+  poly: Feature<Polygon | MultiPolygon> | Polygon | MultiPolygon,
 ): FeatureCollection {
   const seen = new Set<string>();
   const out: Feature<Polygon>[] = [];
@@ -340,14 +348,17 @@ function createFacilityPinImage(): {
 
 /** Seed geometry so the map paints before the first poll returns. */
 function seedFire(): FeatureCollection {
-  return { type: "FeatureCollection", features: [FIRE_BOUNDARY] };
+  return {
+    type: "FeatureCollection",
+    features: [EATON_INITIALIZATION_BOUNDARY],
+  };
 }
 
 function seedPrediction(): FeatureCollection {
   return {
     type: "FeatureCollection",
-    features: PREDICTION_STEPS.map((step) => ({
-      ...step.polygon,
+    features: EATON_AFT_PREDICTION.hourly_steps.map((step) => ({
+      ...step.spread_polygon_geojson,
       properties: { hour_offset: step.hour_offset },
     })),
   };
@@ -460,82 +471,16 @@ export function LiveMap({
 
     const onLoad = async () => {
       try {
-        const t0 = performance.now();
         const buildings = await loadBuildingsGeoJSON();
         if (cancelled) {
           return;
         }
-        // #region agent log
-        fetch("http://127.0.0.1:7368/ingest/4d1c1932-4354-4e1b-9b6b-9bfa1e80c43c", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "b207ac",
-          },
-          body: JSON.stringify({
-            sessionId: "b207ac",
-            runId: "post-fix",
-            hypothesisId: "A",
-            location: "LiveMap.tsx:onLoad",
-            message: "buildings geojson loaded",
-            data: {
-              featureCount: buildings.features.length,
-              loadMs: Math.round(performance.now() - t0),
-              sourceType: "geojson",
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
         buildingsFcRef.current = buildings;
         setupLayers(map, buildings);
         wireInteractions(map, (id) => onSelectSectorRef.current(id));
         resize();
         setReady(true);
-        // #region agent log
-        fetch("http://127.0.0.1:7368/ingest/4d1c1932-4354-4e1b-9b6b-9bfa1e80c43c", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "b207ac",
-          },
-          body: JSON.stringify({
-            sessionId: "b207ac",
-            runId: "post-fix",
-            hypothesisId: "B",
-            location: "LiveMap.tsx:onLoad",
-            message: "layers ready",
-            data: {
-              hasBuildingsSource: Boolean(map.getSource("silos-buildings")),
-              hasFlatLayer: Boolean(map.getLayer("silos-buildings-flat")),
-              has3dLayer: Boolean(map.getLayer("silos-buildings-3d")),
-              zoom: map.getZoom(),
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
       } catch (error) {
-        // #region agent log
-        fetch("http://127.0.0.1:7368/ingest/4d1c1932-4354-4e1b-9b6b-9bfa1e80c43c", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "b207ac",
-          },
-          body: JSON.stringify({
-            sessionId: "b207ac",
-            runId: "post-fix",
-            hypothesisId: "A",
-            location: "LiveMap.tsx:onLoad",
-            message: "buildings setup failed",
-            data: {
-              error: error instanceof Error ? error.message : String(error),
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {});
-        // #endregion
         console.error("SILOS map layer setup failed:", error);
       }
     };
@@ -754,12 +699,22 @@ export function LiveMap({
               </div>
             )}
             <div className="mt-2 space-y-1 border-t border-[var(--s-ink-3)] pt-2">
-              <p className="s-label mb-1">Fire / impact</p>
-              <LegendRow color="#e85a45" label="Active fire" />
-              <LegendRow color="#ff8a65" label="Predicted spread" />
+              <p className="s-label mb-1">Historical model overlay</p>
+              <LegendRow color="#e85a45" label="Observed-derived T+1" />
+              <LegendRow color="#ff6b4a" label="Model T+3" />
+              <LegendRow color="#ffb090" label="Model T+6" />
               <LegendRow color="#e6e4de" label="Buildings (local LARIAC)" />
             </div>
         </div>
+      </div>
+
+      <div className="s-panel absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 px-3 py-2 text-center md:block">
+        <p className="s-mono text-[10px] font-semibold tracking-[0.1em] text-[var(--s-hazard)] uppercase">
+          Historical reconstruction · What-if
+        </p>
+        <p className="s-mono mt-0.5 text-[9px] tracking-[0.06em] text-[var(--s-type-2)] uppercase">
+          ELMFIRE → XGBoost AFT pilot · T+1 observed-derived · T+3/T+6 model
+        </p>
       </div>
 
       {/* Attribution behind info icon */}
@@ -945,7 +900,8 @@ function syncBuildingLodMeshes(
     return key;
   }
 
-  const firePoly = opts.fire?.boundary_geojson ?? FIRE_BOUNDARY;
+  const firePoly =
+    opts.fire?.boundary_geojson ?? EATON_INITIALIZATION_BOUNDARY;
   const bufferPoly = bufferPolygonMeters(firePoly, FIRE_BUILDING_BUFFER_M);
   const coreFc = harvestBuildingsInPolygon(buildings, bufferPoly);
   const fireFc = opts.fireOn
@@ -954,7 +910,9 @@ function syncBuildingLodMeshes(
   const predPoly =
     opts.prediction?.hourly_steps?.[opts.prediction.hourly_steps.length - 1]
       ?.spread_polygon_geojson ??
-    PREDICTION_STEPS[PREDICTION_STEPS.length - 1]?.polygon;
+    EATON_AFT_PREDICTION.hourly_steps[
+      EATON_AFT_PREDICTION.hourly_steps.length - 1
+    ]?.spread_polygon_geojson;
   const predFc =
     opts.predictionOn && predPoly
       ? harvestBuildingsInPolygon(buildings, predPoly)
@@ -964,30 +922,6 @@ function syncBuildingLodMeshes(
   if (key === opts.prevKey) {
     return key;
   }
-  // #region agent log
-  fetch("http://127.0.0.1:7368/ingest/4d1c1932-4354-4e1b-9b6b-9bfa1e80c43c", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "b207ac",
-    },
-    body: JSON.stringify({
-      sessionId: "b207ac",
-      runId: "post-fix",
-      hypothesisId: "C",
-      location: "LiveMap.tsx:syncBuildingLodMeshes",
-      message: "3d lod sync",
-      data: {
-        zoom: Number(zoom.toFixed(2)),
-        zoom3d,
-        core3d: coreFc.features.length,
-        fire3d: fireFc.features.length,
-        pred3d: predFc.features.length,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   setSourceData(map, "silos-buildings-3d-geo", coreFc);
   setSourceData(map, "silos-buildings-fire-geo", fireFc);
   setSourceData(map, "silos-buildings-pred-geo", predFc);
@@ -1116,13 +1050,25 @@ function setupLayers(map: MlMap, buildings: FeatureCollection): void {
       "fill-color": [
         "match",
         ["get", "hour_offset"],
+        1,
+        "#e85a45",
         3,
         "#ff6b4a",
         6,
         "#ff8a65",
         "#ffb090",
       ],
-      "fill-opacity": ["match", ["get", "hour_offset"], 3, 0.22, 6, 0.16, 0.1],
+      "fill-opacity": [
+        "match",
+        ["get", "hour_offset"],
+        1,
+        0.28,
+        3,
+        0.22,
+        6,
+        0.14,
+        0.1,
+      ],
     },
   });
   map.addLayer({

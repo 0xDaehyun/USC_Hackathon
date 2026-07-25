@@ -18,10 +18,12 @@ import {
   facilitiesForSector,
 } from "@/lib/silos/mock/data";
 import {
-  FIRE_BOUNDARY,
-  PREDICTION_STEPS,
   SECTOR_POLYGONS,
 } from "@/lib/silos/mock/geo";
+import {
+  EATON_AFT_PREDICTION,
+  EATON_INITIALIZATION_BOUNDARY,
+} from "@/lib/silos/model/prediction";
 import type {
   CoverageStatus,
   FeedEvent,
@@ -109,17 +111,12 @@ export function getFire(): Fire {
     ...FIRE_BASE,
     containment_pct: containment,
     start_time: new Date(getState().startedAt - 5 * 3600 * 1000).toISOString(),
-    boundary_geojson: FIRE_BOUNDARY,
+    boundary_geojson: EATON_INITIALIZATION_BOUNDARY,
   };
 }
 
 export function getPrediction(): FirePrediction {
-  return {
-    hourly_steps: PREDICTION_STEPS.map((step) => ({
-      hour_offset: step.hour_offset,
-      spread_polygon_geojson: step.polygon,
-    })),
-  };
+  return EATON_AFT_PREDICTION;
 }
 
 export function getSectors(): Sector[] {

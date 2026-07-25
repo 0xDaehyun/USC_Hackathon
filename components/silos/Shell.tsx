@@ -13,6 +13,7 @@ import { SectorRail } from "@/components/silos/SectorRail";
 
 const TABS = [
   { href: "/map", label: "MAP" },
+  { href: "/validation", label: "VALIDATE" },
   { href: "/dashboard", label: "DASHBOARD" },
   { href: "/community", label: "COMMUNITY" },
 ];

@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0",
+  "incident": {
+    "id": "2025-CALAC-009087",
+    "name": "Eaton Fire",
+    "ignition_time_utc": "2025-01-08T02:18:47Z"
+  },
+  "mode": "historical-validation",
+  "generated_at": "2026-07-25T00:00:00Z",
+  "methodology": {
+    "design": "one-hour initialization, three-hour calibration, six-hour holdout"
+  },
+  "sources": {
+    "observed": "observation-derived progression"
+  },
+  "model": {
+    "family": "xgboost-aft",
+    "teacher": "ELMFIRE",
+    "assessment": "pilot-limited",
+    "prediction_unit": "hours-after-observed-perimeter-initialization"
+  },
+  "horizons": [
+    {
+      "hour_offset": 1,
+      "lead_hours_after_initialization": 0,
+      "role": "initialization-not-scored",
+      "observed": {
+        "type": "Feature",
+        "properties": { "hour_offset": 1 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.1, 34.18], [-118.09, 34.18], [-118.09, 34.19], [-118.1, 34.18]]]
+        }
+      },
+      "teacher": {
+        "type": "Feature",
+        "properties": { "hour_offset": 1 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.1, 34.18], [-118.09, 34.18], [-118.09, 34.19], [-118.1, 34.18]]]
+        }
+      },
+      "student": {
+        "type": "Feature",
+        "properties": { "hour_offset": 1 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.1, 34.18], [-118.09, 34.18], [-118.09, 34.19], [-118.1, 34.18]]]
+        }
+      },
+      "counts": {
+        "selected_student_grid_cells": 20,
+        "connected_student_grid_cells": 20,
+        "discarded_disconnected_student_grid_cells": 0
+      }
+    },
+    {
+      "hour_offset": 3,
+      "lead_hours_after_initialization": 2,
+      "role": "calibration",
+      "observed": {
+        "type": "Feature",
+        "properties": { "hour_offset": 3 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.11, 34.17], [-118.08, 34.17], [-118.08, 34.2], [-118.11, 34.17]]]
+        }
+      },
+      "teacher": {
+        "type": "Feature",
+        "properties": { "hour_offset": 3 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.1, 34.17], [-118.08, 34.17], [-118.08, 34.19], [-118.1, 34.17]]]
+        }
+      },
+      "student": {
+        "type": "Feature",
+        "properties": { "hour_offset": 3 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.11, 34.17], [-118.08, 34.17], [-118.08, 34.19], [-118.11, 34.17]]]
+        }
+      },
+      "counts": {
+        "selected_student_grid_cells": 48,
+        "connected_student_grid_cells": 48,
+        "discarded_disconnected_student_grid_cells": 0
+      },
+      "comparisons": {
+        "student_vs_observed": {},
+        "teacher_vs_observed": {},
+        "student_vs_teacher": {}
+      }
+    },
+    {
+      "hour_offset": 6,
+      "lead_hours_after_initialization": 5,
+      "role": "holdout",
+      "observed": {
+        "type": "Feature",
+        "properties": { "hour_offset": 6 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.12, 34.16], [-118.07, 34.16], [-118.07, 34.21], [-118.12, 34.16]]]
+        }
+      },
+      "teacher": {
+        "type": "Feature",
+        "properties": { "hour_offset": 6 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.11, 34.17], [-118.08, 34.17], [-118.08, 34.2], [-118.11, 34.17]]]
+        }
+      },
+      "student": {
+        "type": "Feature",
+        "properties": { "hour_offset": 6 },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[-118.12, 34.17], [-118.08, 34.17], [-118.08, 34.2], [-118.12, 34.17]]]
+        }
+      },
+      "counts": {
+        "selected_student_grid_cells": 62,
+        "connected_student_grid_cells": 62,
+        "discarded_disconnected_student_grid_cells": 0
+      },
+      "comparisons": {
+        "student_vs_observed": {},
+        "teacher_vs_observed": {},
+        "student_vs_teacher": {}
+      }
+    }
+  ],
+  "arrival_time": {
+    "student_vs_observed": {}
+  },
+  "summary": {
+    "status": "share-with-caveats",
+    "holdout_hour": 6,
+    "student_vs_observed": {},
+    "teacher_vs_observed": {},
+    "student_vs_teacher": {}
+  },
+  "quality_checks": {
+    "observed_and_teacher_same_grid": true
+  },
+  "warnings": [
+    "Example only; not an operational validation."
+  ]
+}
