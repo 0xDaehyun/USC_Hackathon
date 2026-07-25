@@ -41,12 +41,12 @@
       },
       "validation": {
         "status": "verified",
-        "evidence": "Clipped Eaton/Altadena/Pasadena AOI (-118.185,34.148,-118.055,34.235); ~102.5k unique footprints extracted from PMTiles z16, then filtered to ~46.8k (area≥45m², height≥5m). Runtime preloads public/gis/buildings.geojson once (no tile streaming).",
+        "evidence": "Clipped Eaton/Altadena/Pasadena AOI (-118.185,34.148,-118.055,34.235); unique footprints extracted from PMTiles z16 with no size filter (includes small auxiliary structures). Runtime preloads public/gis/buildings.geojson once (no tile streaming).",
         "checkedAt": "2026-07-25"
       },
       "limitations": [
         "Subset only — not county-wide LARIAC. Rebuild with: npm run build:buildings",
-        "Tiny auxiliary footprints removed for demo GPU budget; HEIGHT defaults (~6.5 m) when source null.",
+        "HEIGHT defaults (~6.5 m) when source null. Flat citywide; 3D extrusion capped near the fire for GPU budget.",
         "No runtime dependency on ArcGIS / OSM; basemap tiles remain remote (CARTO)."
       ]
     },

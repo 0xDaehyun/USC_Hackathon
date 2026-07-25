@@ -2,8 +2,8 @@
 """
 Rebuild public/gis/buildings.geojson from public/gis/buildings.pmtiles.
 
-Extracts z16 MVT features, dedupes by centroid, drops tiny footprints
-(area < 45 m² or height < 5 m), writes a single FeatureCollection for
+Extracts z16 MVT features, dedupes by centroid, and writes the full
+clipped FeatureCollection (including small auxiliary footprints) for
 one-shot browser preload (no tile streaming).
 
 Requires: pip install pmtiles mapbox-vector-tile
@@ -23,9 +23,6 @@ import mapbox_vector_tile
 ROOT = Path(__file__).resolve().parents[1]
 PMTILES = ROOT / "public" / "gis" / "buildings.pmtiles"
 OUT = ROOT / "public" / "gis" / "buildings.geojson"
-
-MIN_AREA_M2 = 45.0
-MIN_HEIGHT_M = 5.0
 
 
 def lng2tile(lng: float, z: int) -> int:
@@ -50,21 +47,6 @@ def make_transformer(z: int, x: int, y: int, extent: int = 4096):
         return lng, lat
 
     return xf
-
-
-def ring_area_m2(ring) -> float:
-    if len(ring) < 3:
-        return 0.0
-    lat0 = ring[0][1]
-    mlat = 111320.0
-    mlng = 111320.0 * math.cos(math.radians(lat0))
-    total = 0.0
-    for i, _ in enumerate(ring):
-        j = (i - 1) % len(ring)
-        xi, yi = ring[i][0] * mlng, ring[i][1] * mlat
-        xj, yj = ring[j][0] * mlng, ring[j][1] * mlat
-        total += xj * yi - xi * yj
-    return abs(total) / 2
 
 
 def centroid(ring):
@@ -134,9 +116,6 @@ def main() -> int:
                         height = 6.5
                     if not height or height <= 0:
                         height = 6.5
-                    area = ring_area_m2(exterior)
-                    if area < MIN_AREA_M2 or height < MIN_HEIGHT_M:
-                        continue
                     qcoords = [
                         [[round(p[0], 6), round(p[1], 6)] for p in ring]
                         for ring in poly_coords
