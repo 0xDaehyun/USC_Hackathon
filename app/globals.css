@@ -34,3 +34,432 @@ a {
   border-radius: 0.875rem;
   padding: 0.875rem 1rem;
 }
+
+/* ============================================================
+   SILOS — brutalist ops-room theme (scoped under .silos)
+   Print-shop structure (1px rules, mono registers, display caps)
+   on a dark command-center ink palette.
+   ============================================================ */
+.silos {
+  --s-ink-0: #0b0c0d;
+  --s-ink-1: #121415;
+  --s-ink-2: #1b1e20;
+  --s-ink-3: #2e3235;
+  --s-type-1: #f2f1ed;
+  --s-type-2: #b9bdb7;
+  --s-type-3: #7d8388;
+  --s-hazard: #e61919;
+  --s-signal: #fece09;
+  --s-claim: #61d5f8;
+  --s-active: #34d17b;
+  --s-display: "Archivo Black", "Arial Black", sans-serif;
+  --s-sans: "Archivo", Inter, system-ui, sans-serif;
+  /* Labels stay Archivo; prose uses Inter (email-marketing readability). */
+  --s-mono: "Archivo", Inter, system-ui, sans-serif;
+  --s-body: "Inter", "Archivo", system-ui, sans-serif;
+
+  background: var(--s-ink-0);
+  color: var(--s-type-1);
+  color-scheme: dark;
+  font-family: var(--s-sans);
+  font-feature-settings: "tnum";
+}
+
+.silos ::selection {
+  background: var(--s-hazard);
+  color: #fff;
+}
+
+/* register label: [ SECTORS ] style — Inter spaced caps, CTA-like */
+.s-label {
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--s-type-3);
+}
+.s-label--bracket::before {
+  content: "[ ";
+  color: var(--s-hazard);
+}
+.s-label--bracket::after {
+  content: " ]";
+  color: var(--s-hazard);
+}
+
+.s-display {
+  font-family: var(--s-display);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+}
+
+.s-mono {
+  font-family: var(--s-mono);
+}
+
+/* Prose — email-marketing Inter: generous leading, normal tracking */
+.s-body {
+  font-family: var(--s-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--s-type-2);
+}
+.s-body-sm {
+  font-family: var(--s-body);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--s-type-3);
+}
+
+/* Sector dossier prose — match summary tone, slightly open leading */
+.s-dossier-prose {
+  color: var(--s-type-2);
+  line-height: 1.7;
+}
+
+/* hard-rule panel */
+.s-panel {
+  background: var(--s-ink-1);
+  border: 1px solid var(--s-ink-3);
+}
+
+/* Paper brutalist surface for dashboard / community */
+.silos-paper {
+  --s-ink-0: #f4f4f0;
+  --s-ink-1: #ffffff;
+  --s-ink-2: #eae8e3;
+  --s-ink-3: #060606;
+  --s-type-1: #060606;
+  --s-type-2: #1a1a18;
+  --s-type-3: #5c5a55;
+  background: var(--s-ink-0);
+  color: var(--s-type-1);
+  color-scheme: light;
+}
+
+/* status tags — square, spaced caps, loud */
+.s-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--s-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border: 1px solid currentColor;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.s-tag--critical {
+  color: var(--s-hazard);
+  animation: s-flash 1.6s steps(2, jump-none) infinite;
+}
+.s-tag--warning { color: var(--s-signal); }
+.s-tag--monitor { color: var(--s-type-3); }
+.s-tag--claim { color: var(--s-claim); }
+.s-tag--active { color: var(--s-active); }
+.s-tag--fill {
+  background: var(--s-hazard);
+  border-color: var(--s-hazard);
+  color: #fff;
+  animation: none;
+}
+
+/* hazard-stripe block for gap alerts */
+.s-hazard-stripes {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 12px,
+    rgba(230, 25, 25, 0.09) 12px 24px
+  );
+}
+
+/* live pulse dot */
+.s-live-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--s-hazard);
+  border-radius: 50%;
+  animation: s-pulse 2.2s ease-in-out infinite;
+}
+
+/* event-stream rows (wire feed) */
+.s-stream-row {
+  display: grid;
+  grid-template-columns: 14px 7ch 9ch 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 12px 9px 8px;
+  border-top: 1px solid var(--s-ink-3);
+  font-family: var(--s-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.s-stream-row:hover { background: var(--s-ink-2); }
+.s-stream-newmark {
+  width: 3px;
+  height: 100%;
+  min-height: 14px;
+  background: var(--s-hazard);
+  animation: s-pulse-opacity 1.4s ease-in-out infinite;
+}
+
+/* KPI strip cells */
+.s-kpi {
+  border-left: 1px solid var(--s-ink-3);
+  padding: 10px 16px 12px;
+}
+.s-kpi__value {
+  font-family: var(--s-display);
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* wire ribbon (bottom of map) */
+.s-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 14px;
+  border-top: 1px solid var(--s-ink-3);
+  background: color-mix(in srgb, var(--s-ink-0) 88%, transparent);
+  backdrop-filter: blur(6px);
+  font-family: var(--s-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.s-ribbon::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.s-ribbon__sep { color: var(--s-ink-3); }
+.s-ribbon b { color: var(--s-type-1); font-weight: 600; }
+.s-ribbon .val { color: var(--s-signal); }
+
+/* headline type-in (motion ref: citation, not chorus) */
+.s-type-in {
+  animation: s-type-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* breaking-news ticker (top bar live wire) */
+.s-ticker {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--s-ink-3);
+  background: #000;
+  overflow: hidden;
+}
+.s-ticker__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.s-ticker__track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  animation: s-marquee 45s linear infinite;
+  will-change: transform;
+}
+.s-ticker__viewport:hover .s-ticker__track {
+  animation-play-state: paused;
+}
+.s-ticker__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 0;
+  margin-right: 44px;
+  font-family: var(--s-mono);
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--s-type-2);
+}
+@keyframes s-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes s-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(230, 25, 25, 0.45); }
+  50% { box-shadow: 0 0 0 8px rgba(230, 25, 25, 0); }
+}
+@keyframes s-pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@keyframes s-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes s-type-in {
+  from { opacity: 0; letter-spacing: 0.04em; }
+  to { opacity: 1; letter-spacing: -0.03em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .silos * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* dark square popups on the SILOS map */
+.silos .maplibregl-popup-content {
+  border-radius: 0;
+  background: var(--s-ink-1);
+  color: var(--s-type-1);
+  border: 1px solid var(--s-ink-3);
+  font-family: var(--s-mono);
+  font-size: 11px;
+  padding: 8px 10px;
+}
+.silos .maplibregl-popup-tip { border-top-color: var(--s-ink-3); }
+.silos .maplibregl-ctrl-group {
+  border-radius: 0;
+  background: var(--s-ink-1);
+}
+.silos .maplibregl-ctrl-group button {
+  border-radius: 0;
+  border-bottom: 1px solid var(--s-ink-3);
+}
+.silos .maplibregl-ctrl button .maplibregl-ctrl-icon {
+  filter: invert(0.85);
+}
+
+/*
+ * Give the MapLibre container a real box. Do NOT force the WebGL <canvas>
+ * dimensions with !important — that desyncs the drawing buffer from CSS size
+ * and can blank every overlay layer.
+ */
+.silos .silos-map-canvas,
+.silos .silos-map-canvas .maplibregl-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
+   SILOS onboarding — paper brutalist (web-prototype-taste ref)
+   with motion-frames rotation/pulse. Scoped under .onb.
+   ============================================================ */
+.onb {
+  /* Same type stack as the ops-room dashboard (.silos). */
+  --onb-paper: #f4f4f0;
+  --onb-paper-2: #eae8e3;
+  --onb-ink: #060606;
+  --onb-ink-soft: #1a1a18;
+  --onb-hazard: #e61919;
+  --onb-display: "Archivo Black", "Arial Black", sans-serif;
+  --onb-sans: "Archivo", Inter, system-ui, sans-serif;
+  --onb-mono: "Archivo", Inter, system-ui, sans-serif;
+  --onb-body: "Inter", "Archivo", system-ui, sans-serif;
+
+  background:
+    radial-gradient(circle at 50% 45%, rgba(6, 6, 6, 0.04), transparent 70%),
+    radial-gradient(circle, rgba(6, 6, 6, 0.1) 1px, transparent 1.4px) 0 0 / 28px 28px,
+    var(--onb-paper);
+  color: var(--onb-ink);
+  font-family: var(--onb-sans);
+  font-feature-settings: "tnum";
+}
+.onb-mono {
+  font-family: var(--onb-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+}
+.onb-display {
+  font-family: var(--onb-display);
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+}
+.onb-body {
+  font-family: var(--onb-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--onb-ink-soft);
+}
+.onb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(6, 6, 6, 0.45);
+  animation: onb-spin 60s linear infinite;
+}
+.onb-focal-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  background: var(--onb-hazard);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: onb-pulse 2.6s ease-in-out infinite;
+}
+.onb-type-in {
+  animation: onb-type-in 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.onb-meta-row {
+  display: grid;
+  grid-template-columns: 11ch 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-top: 1px solid var(--onb-ink);
+  font-family: var(--onb-mono);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--onb-ink);
+}
+.onb-meta-row b {
+  color: var(--onb-hazard);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+@keyframes onb-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes onb-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(230, 25, 25, 0.45);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 22px rgba(230, 25, 25, 0);
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+}
+@keyframes onb-type-in {
+  from { opacity: 0; letter-spacing: 0.05em; }
+  to { opacity: 1; letter-spacing: -0.04em; }
+}

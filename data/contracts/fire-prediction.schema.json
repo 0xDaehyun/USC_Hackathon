@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://silos.example/schemas/fire-prediction.schema.json",
+  "title": "SILOS Physics-guided Fire Prediction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "incident_id",
+    "mode",
+    "generated_at",
+    "model",
+    "scenario",
+    "hourly_steps",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "incident_id": { "const": "fire-eaton-sim" },
+    "mode": { "const": "historical-reconstruction-what-if" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "version",
+        "teacher",
+        "assessment",
+        "aft_distribution_scale",
+        "source_model_manifest",
+        "output_semantics"
+      ],
+      "properties": {
+        "family": { "const": "xgboost-aft" },
+        "version": { "const": "pilot-v0.1" },
+        "teacher": { "const": "ELMFIRE" },
+        "assessment": { "const": "pilot-limited" },
+        "aft_distribution_scale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "source_model_manifest": { "type": "string", "minLength": 1 },
+        "output_semantics": {
+          "const": "elmfire-teacher-grid-arrival-surrogate-prototype"
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wind_speed_add_mph",
+        "wind_direction_add_degrees",
+        "m1_add_percentage_points",
+        "m10_add_percentage_points",
+        "m100_add_percentage_points",
+        "initialization_hour_after_ignition",
+        "display_hours_after_ignition",
+        "prediction_time_unit",
+        "grid_cell_size_meters"
+      ],
+      "properties": {
+        "wind_speed_add_mph": { "type": "number" },
+        "wind_direction_add_degrees": { "type": "number" },
+        "m1_add_percentage_points": { "type": "number" },
+        "m10_add_percentage_points": { "type": "number" },
+        "m100_add_percentage_points": { "type": "number" },
+        "initialization_hour_after_ignition": { "const": 1 },
+        "display_hours_after_ignition": { "const": [1, 3, 6] },
+        "prediction_time_unit": {
+          "const": "hours-after-observed-perimeter-initialization"
+        },
+        "grid_cell_size_meters": { "const": 240 }
+      }
+    },
+    "hourly_steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/hourlyStep" }
+    },
+    "warnings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "polygonGeometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "enum": ["Polygon", "MultiPolygon"] },
+        "coordinates": { "type": "array", "minItems": 1 }
+      }
+    },
+    "predictionFeature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "properties", "geometry"],
+      "properties": {
+        "type": { "const": "Feature" },
+        "properties": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "hour_offset",
+            "lead_hours_after_initialization",
+            "source"
+          ],
+          "properties": {
+            "hour_offset": { "enum": [1, 3, 6] },
+            "lead_hours_after_initialization": { "enum": [0, 2, 5] },
+            "source": { "const": "xgboost-aft-elmfire-surrogate" }
+          }
+        },
+        "geometry": { "$ref": "#/$defs/polygonGeometry" }
+      }
+    },
+    "hourlyStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hour_offset",
+        "lead_hours_after_initialization",
+        "reached_grid_cell_count",
+        "connected_grid_cell_count",
+        "discarded_disconnected_grid_cell_count",
+        "spread_polygon_geojson"
+      ],
+      "properties": {
+        "hour_offset": { "enum": [1, 3, 6] },
+        "lead_hours_after_initialization": { "enum": [0, 2, 5] },
+        "reached_grid_cell_count": { "type": "integer", "minimum": 1 },
+        "connected_grid_cell_count": { "type": "integer", "minimum": 1 },
+        "discarded_disconnected_grid_cell_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spread_polygon_geojson": {
+          "$ref": "#/$defs/predictionFeature"
+        }
+      }
+    }
+  }
+}

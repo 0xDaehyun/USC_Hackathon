@@ -323,3 +323,51 @@ P1 기능을 구현한 경우에는 다음 조건을 추가로 확인합니다.
 ---
 
 조사 및 문서 기준일: 2026-07-23
+
+---
+
+## SILOS 데모 (해커톤 ops UI)
+
+라이브 피치용 운영실 UI는 `/map`, `/dashboard`, `/community`에 있습니다.
+전체 기능·레이어·API 목록은 [docs/SILOS-FEATURES.md](docs/SILOS-FEATURES.md)를 보세요.
+
+### Physics-guided ML 연결
+
+`/api/v1/fires/:id/prediction`은
+`data/model/eaton-aft-prediction.json`의 T+1·T+3·T+6 GeoJSON을 반환합니다.
+T+1은 관측자료 기반 초기 화재면이며, T+3·T+6은 32개 ELMFIRE Teacher 실행을
+근사한 XGBoost AFT `pilot-v0.1` 결과입니다. 이 결과는
+`Historical reconstruction · What-if`로 표시하며 실제 화재 확률, 공식 예보,
+대피 명령으로 표현하지 않습니다.
+
+모델 저장소에서 다음 명령으로 프론트용 결과를 다시 생성할 수 있습니다.
+
+```bash
+npm run pipeline:export-frontend-prediction
+```
+
+프론트는 XGBoost를 브라우저에서 직접 실행하지 않습니다. 현재 baseline 시나리오
+결과를 API 계약에 맞춰 표시하며, 실시간 What-if 입력 연결은 후속 단계입니다.
+
+### Eaton 실제 확산 검증 화면
+
+`/validation`은 2025 Eaton Fire의 관측 기반 진행 경계, 선택된 ELMFIRE
+Teacher, XGBoost AFT Student를 T+1·T+3·T+6에서 겹쳐 보여줍니다.
+T+1은 초기화 입력이므로 점수를 계산하지 않고, T+3는 Teacher 조건 선택에 사용한
+calibration, T+6는 선택에 사용하지 않은 temporal holdout으로 표시합니다.
+
+T+6 Student-vs-observed 30 m footprint 결과는 IoU `0.642`, precision `0.874`,
+recall `0.707`, F1 `0.782`입니다. Student는 실제 1,090.6 acres 중 882.5
+acres를 예측해 `-208.2 acres`의 면적 편향을 보였습니다. 이 값은 Eaton 한
+사건과 하나의 observation-derived 자료를 사용한 `Share with caveats`
+결과이며, 다른 사건이나 운영 환경의 정확도를 보장하지 않습니다.
+30 m footprint에서 Student가 Teacher보다 `0.150` 높은 IoU를 보이지만,
+동일한 240 m native grid에서는 차이가 `0.009`에 불과합니다. 따라서 이 차이는
+부분적으로 블록 확장 효과이며 ML이 실제 화재 물리를 새로 학습해 Teacher를 크게
+개선했다는 근거로 사용하지 않습니다.
+
+검증 API와 데이터 계약:
+
+- `/api/v1/validation/eaton`
+- `data/model/eaton-aft-observed-validation.json`
+- `data/contracts/aft-observed-validation.schema.json`

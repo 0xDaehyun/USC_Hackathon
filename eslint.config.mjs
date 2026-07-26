@@ -7,8 +7,16 @@ export default defineConfig([
   ...nextTypeScript,
   globalIgnores([
     ".next/**",
+    "dist/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored MapLibre worker bundles (copied from maplibre-gl/dist).
+    "public/maplibre/**",
+    // Binary GIS tilesets.
+    "public/gis/**",
+    // Python pipeline workspace: venvs and caches ship JS artifacts that are
+    // not part of the app and break `eslint .`.
+    "pipeline/**",
   ]),
 ]);

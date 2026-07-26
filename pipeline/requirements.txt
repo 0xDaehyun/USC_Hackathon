@@ -1,0 +1,31 @@
+# Core geospatial risk-mapping pipeline dependencies.
+# Purpose of each dependency is documented in pipeline/README.md.
+
+# HTTP + STAC catalog access (Sentinel-2 scene discovery)
+requests
+pystac-client
+
+# Raster / array processing (burn mask, smoke grid, dNBR fallback)
+numpy
+scipy
+rasterio
+rioxarray
+xarray
+
+# Vector processing + zonal statistics (SVI tracts, risk scoring)
+geopandas
+shapely
+rasterstats
+
+# NOAA HRRR-Smoke GRIB2 access (Phase 2)
+herbie-data
+cfgrib
+eccodes
+
+# Hugging Face model + example download (Phase 1, Prithvi BurnScars)
+huggingface_hub
+
+# Visualization (Phase 4)
+folium
+mapclassify
+branca

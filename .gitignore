@@ -26,6 +26,7 @@ out/
 dist/
 coverage/
 *.tsbuildinfo
+.wrangler/
 
 # Logs
 *.log
@@ -34,3 +35,11 @@ coverage/
 data/raw/
 data/cache/
 data/processed/
+
+# Risk pipeline local artifacts (large downloads and rasters)
+pipeline/.venv-bootstrap/
+pipeline/.uv-python/
+pipeline/.uv-cache/
+pipeline/data_cache/
+pipeline/outputs/*.tif
+.vercel
