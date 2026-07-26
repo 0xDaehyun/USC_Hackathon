@@ -2,9 +2,9 @@
 """
 Rebuild public/gis/buildings.geojson from public/gis/buildings.pmtiles.
 
-Extracts z16 MVT features, dedupes by centroid, and writes the full
-clipped FeatureCollection (including small auxiliary footprints) for
-one-shot browser preload (no tile streaming).
+Extracts z16 MVT features, dedupes by centroid, and writes a deterministic
+spatially distributed browser subset for one-shot preload (no tile streaming).
+The PMTiles file remains the complete clipped source.
 
 Requires: pip install pmtiles mapbox-vector-tile
   python3 scripts/build-buildings-geojson.py
@@ -23,6 +23,7 @@ import mapbox_vector_tile
 ROOT = Path(__file__).resolve().parents[1]
 PMTILES = ROOT / "public" / "gis" / "buildings.pmtiles"
 OUT = ROOT / "public" / "gis" / "buildings.geojson"
+MAX_BROWSER_FEATURES = 30_000
 
 
 def lng2tile(lng: float, z: int) -> int:
@@ -126,12 +127,22 @@ def main() -> int:
                         "geometry": {"type": "Polygon", "coordinates": qcoords},
                     }
 
-    fc = {"type": "FeatureCollection", "features": list(unique.values())}
+    features = list(unique.values())
+    source_count = len(features)
+    if source_count > MAX_BROWSER_FEATURES:
+        step = source_count / MAX_BROWSER_FEATURES
+        features = [
+            features[min(int(i * step), source_count - 1)]
+            for i in range(MAX_BROWSER_FEATURES)
+        ]
+
+    fc = {"type": "FeatureCollection", "features": features}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(fc, separators=(",", ":"))
     OUT.write_text(text)
     print(
-        f"OK {OUT} features={len(fc['features'])} bytes={OUT.stat().st_size}",
+        f"OK {OUT} source={source_count} browser={len(fc['features'])} "
+        f"bytes={OUT.stat().st_size}",
         file=sys.stderr,
     )
     return 0

@@ -79,7 +79,7 @@
     },
     {
       "id": "la-county-lariac-buildings-2023",
-      "name": "Building Outline (2023) — LARIAC (local GeoJSON clip)",
+      "name": "Building Outline (2023) — LARIAC (local browser subset)",
       "authority": "Los Angeles County / LARIAC",
       "modes": [
         "live",
@@ -93,11 +93,11 @@
       },
       "validation": {
         "status": "verified",
-        "evidence": "Clipped Eaton/Altadena/Pasadena AOI (-118.185,34.148,-118.055,34.235); unique footprints extracted from PMTiles z16 with no size filter (includes small auxiliary structures). Runtime preloads public/gis/buildings.geojson once (no tile streaming).",
+        "evidence": "Clipped Eaton/Altadena/Pasadena AOI (-118.185,34.148,-118.055,34.235); 102,517 unique footprints are retained in local PMTiles. Runtime preloads a deterministic, spatially distributed 30,000-footprint GeoJSON subset once (no tile streaming).",
         "checkedAt": "2026-07-25"
       },
       "limitations": [
-        "Subset only — not county-wide LARIAC. Rebuild with: npm run build:buildings",
+        "Eaton-area subset only — not county-wide LARIAC. The browser GeoJSON is further sampled to 30,000 real footprints for hosting size and rendering budget. Rebuild with: npm run build:buildings",
         "HEIGHT defaults (~6.5 m) when source null. Flat citywide; 3D extrusion capped near the fire for GPU budget.",
         "No runtime dependency on ArcGIS / OSM; basemap tiles remain remote (CARTO)."
       ]

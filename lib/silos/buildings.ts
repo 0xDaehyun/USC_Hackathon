@@ -1,7 +1,8 @@
 /**
  * Local LARIAC building footprints for the Eaton / Altadena / Pasadena demo.
- * Served as a single preloaded GeoJSON (`/public/gis/buildings.geojson`) so the
- * map never streams vector tiles (no zoom/pan popping).
+ * Served as a deterministic preloaded GeoJSON subset
+ * (`/public/gis/buildings.geojson`) so the map never streams vector tiles.
+ * The complete clipped source remains available as PMTiles for rebuilding.
  */
 import type {
   Feature,
@@ -19,7 +20,7 @@ export const BUILDINGS_BBOX = {
   north: 34.235,
 } as const;
 
-/** Public URL for the clipped, filtered building FeatureCollection. */
+/** Public URL for the clipped, spatially distributed browser subset. */
 export const BUILDINGS_GEOJSON_URL = "/gis/buildings.geojson";
 
 /** @deprecated Kept for docs / rebuild tooling; runtime uses GeoJSON. */
